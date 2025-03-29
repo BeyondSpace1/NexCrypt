@@ -1,0 +1,23 @@
+{
+    "name": "nexcrypt",
+    "version": "1.0.0",
+    "main": "index.js",
+    "bin": {
+        "nexcrypt": "./bin/nexcrypt.js"
+    },
+    "dependencies": {
+        "axios": "^1.8.4",
+        "crypto": "^1.0.1",
+        "dotenv": "^16.4.7",
+        "ipfs-http-client": "^56.0.0"
+    },
+    "description": "A unique encryption system with chaining, hashing, and decentralized storage",
+    "author": "Your Name",
+    "license": "MIT",
+    "keywords": [
+        "encryption",
+        "blockchain",
+        "ipfs",
+        "cli"
+    ]
+}
