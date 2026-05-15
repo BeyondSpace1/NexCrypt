@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCrypt | Decentralized Encryption</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5, #9333ea, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(147, 51, 234, 0.5);
+            transform: translateY(-5px);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #9333ea;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="three-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 px-8 py-6 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-white/5">
+        <div class="text-2xl font-bold tracking-tighter">NEX<span class="text-purple-500">CRYPT</span></div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium uppercase tracking-widest">
+            <a href="#about" class="nav-link">About</a>
+            <a href="#problem" class="nav-link">Problem</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#roadmap" class="nav-link">Roadmap</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full text-sm font-bold transition-all">
+            GET STARTED
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-4 pt-20">
+        <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tight animate-title">
+            DECENTRALIZED <br> <span class="gradient-text">DATA VEILING</span>
+        </h1>
+        <p class="max-w-2xl text-gray-400 text-lg md:text-xl mb-10 animate-fade-in">
+            A next-generation encryption engine that fragments your sensitive data across IPFS networks while maintaining a private local key-system.
+        </p>
+        <div class="flex space-x-4">
+            <a href="#demo" class="bg-white text-black px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform">TRY LIVE DEMO</a>
+            <a href="https://github.com/BeyondSpace1/NexCrypt" target="_blank" class="border border-white/20 px-8 py-4 rounded-full font-bold hover:bg-white/5 transition-all">VIEW REPO</a>
+        </div>
+    </section>
+
+    <!-- Live Demo Section -->
+    <section id="demo" class="py-24 px-8 max-w-5xl mx-auto">
+        <div class="glass-card p-12 rounded-[3rem] text-center border-purple-500/30">
+            <h2 class="text-3xl font-bold mb-8">Live Encryption Engine</h2>
+            <div class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <input type="text" id="demoInput" placeholder="Message to Veil..." class="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-purple-500 transition-all text-lg">
+                    <input type="password" id="demoKey" placeholder="Encryption Key..." class="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 outline-none focus:border-purple-500 transition-all text-lg">
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="runLiveAction('veil')" class="bg-purple-600 px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20">VEIL MESSAGE</button>
+                    <button onclick="runLiveAction('unveil')" class="bg-indigo-600 px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20">UNVEIL MESSAGE</button>
+                    <button onclick="resetDemo()" class="border border-white/10 px-8 py-4 rounded-xl font-bold hover:bg-white/5 transition-all">RESET</button>
+                </div>
+
+                <div id="resultContainer" class="mt-12 hidden">
+                    <div class="text-sm text-gray-500 mb-4 uppercase tracking-widest">Processing Results</div>
+                    <div id="processedOutput" class="bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-purple-400 break-all text-lg mb-8 min-h-[60px]"></div>
+                    
+                    <div id="simulationOutput" class="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-0 transition-opacity duration-500">
+                        <!-- Chunks will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem" class="py-24 px-8 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-4xl font-bold mb-6">The Problem with <br> <span class="text-purple-500">Centralized Trust</span></h2>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    Traditional encryption relies on centralized storage or singular encryption keys. If a database is breached, the data is vulnerable. Even with encryption, brute-force attacks on single repositories pose significant risks.
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center text-sm text-gray-300">
+                        <span class="w-2 h-2 bg-red-500 rounded-full mr-3"></span> Single Point of Failure
+                    </li>
+                    <li class="flex items-center text-sm text-gray-300">
+                        <span class="w-2 h-2 bg-red-500 rounded-full mr-3"></span> Transparent Data Lakes
+                    </li>
+                    <li class="flex items-center text-sm text-gray-300">
+                        <span class="w-2 h-2 bg-red-500 rounded-full mr-3"></span> Vulnerable Transit Pipes
+                    </li>
+                </ul>
+            </div>
+            <div class="glass-card p-8 rounded-3xl">
+                <canvas id="vulnerabilityChart" height="300"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-8 bg-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Core Innovation</h2>
+                <p class="text-gray-400">Beyond encryption—fragmentation and distribution.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 flex items-center justify-center rounded-xl mb-6 font-bold text-xl">01</div>
+                    <h3 class="text-xl font-bold mb-4">Hybrid Fragmentation</h3>
+                    <p class="text-gray-400 text-sm">NexCrypt splits data into chunks, keeping a "System Chunk" locally while scattering the rest across IPFS.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-12 h-12 bg-purple-600/20 text-purple-400 flex items-center justify-center rounded-xl mb-6 font-bold text-xl">02</div>
+                    <h3 class="text-xl font-bold mb-4">Stateful Chaining</h3>
+                    <p class="text-gray-400 text-sm">Each chunk's encryption state depends on the previous, creating a cryptographic echo that is nearly impossible to reverse without the full sequence.</p>
+                </div>
+                <div class="glass-card p-8 rounded-3xl">
+                    <div class="w-12 h-12 bg-pink-600/20 text-pink-400 flex items-center justify-center rounded-xl mb-6 font-bold text-xl">03</div>
+                    <h3 class="text-xl font-bold mb-4">IPFS Redundancy</h3>
+                    <p class="text-gray-400 text-sm">Leveraging the Pinata API and IPFS for decentralized, immutable storage, ensuring your data survives even if your local server fails.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-12 border-y border-white/5 bg-white/5">
+        <div class="max-w-7xl mx-auto px-8 flex flex-wrap justify-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+            <div class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase"><span class="w-2 h-2 bg-blue-500 rounded-full"></span> Three.js</div>
+            <div class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase"><span class="w-2 h-2 bg-green-500 rounded-full"></span> Chart.js</div>
+            <div class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase"><span class="w-2 h-2 bg-purple-500 rounded-full"></span> Anime.js</div>
+            <div class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase"><span class="w-2 h-2 bg-sky-500 rounded-full"></span> Tailwind CSS</div>
+            <div class="flex items-center gap-2 font-bold text-sm tracking-widest uppercase"><span class="w-2 h-2 bg-yellow-500 rounded-full"></span> Node.js</div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="py-24 px-8 max-w-7xl mx-auto">
+        <h2 class="text-4xl font-bold mb-16 text-center">Future <span class="text-purple-500">Improvements</span></h2>
+        <div class="space-y-6">
+            <div class="glass-card p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold">Unicode & ASCII Extended Support</h4>
+                    <p class="text-gray-500 text-sm">Broadening the encryption alphabet to support global character sets.</p>
+                </div>
+                <span class="text-xs font-bold px-3 py-1 bg-yellow-500/20 text-yellow-500 rounded-full">PLANNED</span>
+            </div>
+            <div class="glass-card p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold">Native IPFS Node Integration</h4>
+                    <p class="text-gray-500 text-sm">Removing dependence on external APIs for true decentralization.</p>
+                </div>
+                <span class="text-xs font-bold px-3 py-1 bg-blue-500/20 text-blue-500 rounded-full">IN REVIEW</span>
+            </div>
+            <div class="glass-card p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h4 class="font-bold">Web-Based Decryption GUI</h4>
+                    <p class="text-gray-500 text-sm">A visual interface for non-technical users to veil and unveil data.</p>
+                </div>
+                <span class="text-xs font-bold px-3 py-1 bg-green-500/20 text-green-500 rounded-full">RESEARCH</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 px-8 border-t border-white/5 bg-black">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-8">Get In Touch</h2>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a href="mailto:contact@beyondspace.io" class="glass-card px-8 py-4 rounded-full hover:bg-purple-600 transition-colors">Email Us</a>
+                <a href="#" class="glass-card px-8 py-4 rounded-full hover:bg-indigo-600 transition-colors">Documentation</a>
+                <a href="https://github.com/BeyondSpace1/NexCrypt" class="glass-card px-8 py-4 rounded-full hover:bg-gray-700 transition-colors">Github</a>
+            </div>
+            <p class="mt-12 text-gray-500 text-sm">© 2026 NexCrypt Project. Built for the decentralized future.</p>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
